@@ -1,59 +1,70 @@
 Config {
-       font = "xft:Zekton:size=13:bold:antialias=true"
-       , additionalFonts = [ "xft:FontAwesome:size=11" ]
+       font = "xft:Bitstream Vera Sans Mono:size=12:bold:antialias=true"
        , allDesktops = True
        , bgColor = "#282c34"
        , fgColor = "#bbc2cf"
        , position = TopW L 95
-       , commands = [ Run Cpu [ "--template", "<fc=#a9a1e1><fn=1></fn></fc> <total>%"
-                              , "--Low","3"
-                              , "--High","50"
-                              , "--low","#bbc2cf"
-                              , "--normal","#bbc2cf"
-                              , "--high","#fb4934"] 50
+       , commands =
 
-                    , Run Memory ["-t","<fc=#51afef><fn=1></fn></fc> <usedratio>%"
-                                 ,"-H","80"
-                                 ,"-L","10"
-                                 ,"-l","#bbc2cf"
-                                 ,"-n","#bbc2cf"
-                                 ,"-h","#fb4934"] 50
+        -- network activity monitor (dynamic interface resolution)
+        [ Run DynNetwork     [ "--template" , "<dev>: <tx>kB/s|<rx>kB/s"
+                             , "--Low"      , "1000"       -- units: B/s
+                             , "--High"     , "5000"       -- units: B/s
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 10
 
-                    , Run Date "<fc=#ECBE7B><fn=1></fn></fc> %a %b %_d %I:%M" "date" 300
-                    , Run DynNetwork ["-t","<fc=#4db5bd><fn=1></fn></fc> <rx>, <fc=#c678dd><fn=1></fn></fc> <tx>"
-                                     ,"-H","200"
-                                     ,"-L","10"
-                                     ,"-h","#bbc2cf"
-                                     ,"-l","#bbc2cf"
-                                     ,"-n","#bbc2cf"] 50
+        -- cpu activity monitor
+        , Run MultiCpu       [ "--template" , "Cpu: <total0>%|<total1>%"
+                             , "--Low"      , "50"         -- units: %
+                             , "--High"     , "85"         -- units: %
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 10
 
-                    , Run CoreTemp ["-t", "<fc=#CDB464><fn=1></fn></fc> <core0>°"
-                                   , "-L", "30"
-                                   , "-H", "75"
-                                   , "-l", "lightblue"
-                                   , "-n", "#bbc2cf"
-                                   , "-h", "#aa4450"] 50
+        -- cpu core temperature monitor
+        , Run CoreTemp       [ "--template" , "Temp: <core0>°C|<core1>°C"
+                             , "--Low"      , "70"        -- units: °C
+                             , "--High"     , "80"        -- units: °C
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 50
 
-                    -- battery monitor
-                    , Run BatteryP       [ "BAT0" ]
-                                         [ "--template" , "<fc=#B1DE76><fn=1></fn></fc> <acstatus>"
-                                         , "--Low"      , "10"        -- units: %
-                                         , "--High"     , "80"        -- units: %
-                                         , "--low"      , "#fb4934" -- #ff5555
-                                         , "--normal"   , "#bbc2cf"
-                                         , "--high"     , "#98be65"
+        -- memory usage monitor
+        , Run Memory         [ "--template" ,"Mem: <usedratio>%"
+                             , "--Low"      , "20"        -- units: %
+                             , "--High"     , "90"        -- units: %
+                             , "--low"      , "darkgreen"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkred"
+                             ] 10
 
-                                         , "--" -- battery specific options
-                                                   -- discharging status
-                                                   , "-o"   , "<left>% (<timeleft>)"
-                                                   -- AC "on" status
-                                                   , "-O"   , "<left>% (<fc=#98be65>Charging</fc>)" -- 50fa7b
-                                                   -- charged status
-                                                   , "-i"   , "<fc=#98be65>Charged</fc>"
-                                         ] 50
-                    , Run StdinReader
-                    ]
+        -- battery monitor
+        , Run Battery        [ "--template" , "Batt: <acstatus>"
+                             , "--Low"      , "10"        -- units: %
+                             , "--High"     , "80"        -- units: %
+                             , "--low"      , "darkred"
+                             , "--normal"   , "darkorange"
+                             , "--high"     , "darkgreen"
+
+                             , "--" -- battery specific options
+                                       -- discharging status
+                                       , "-o"	, "<left>% (<timeleft>)"
+                                       -- AC "on" status
+                                       , "-O"	, "<fc=#dAA520>Charging</fc>"
+                                       -- charged status
+                                       , "-i"	, "<fc=#006000>Charged</fc>"
+                             ] 50
+
+        -- time and date indicator
+        --   (%F = y-m-d date, %a = day of week, %T = h:m:s time)
+        , Run Date           "<fc=#ABABAB>%F (%a) %T</fc>" "date" 10
+        , Run StdinReader
+        ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader% }{ %cpu% | %coretemp% | %memory% | %battery% | %dynnetwork% | %date%  |"   -- #69DFFA
+       , template = "%StdinReader% }{ %battery% | %multicpu% | %coretemp% | %memory% | %dynnetwork% | %date% |"   -- #69DFFA
        }
