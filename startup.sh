@@ -1,17 +1,5 @@
 #!/bin/sh
 
-# System tray
-if [ -z "$(pgrep trayer)" ] ; then
-    trayer --edge top \
-           --align right \
-           --widthtype percent \
-           --height 24 \
-           --alpha 0 \
-           --transparent true \
-           --width 5 \
-           --tint 0x282c34 &
-fi
-
 # Power manager
 if [ -z "$(pgrep xfce4-power-manager)" ] ; then
     xfce4-power-manager &
@@ -53,8 +41,8 @@ if [ -z "$(pgrep nm-applet)" ] ; then
 fi
 
 # Google Drive
-if [ -z "$(pgrep insync)" ] ; then
-    insync start &
+if [ -z "$(pgrep fcitx)" ] ; then
+    fcitx &
 fi
 # xbindkeys
 xbindkeys

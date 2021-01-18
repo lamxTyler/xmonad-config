@@ -204,7 +204,7 @@ batteryIcon x
 
 -- | Change the font to font awesome here
 fontAwesome :: String -> String
-fontAwesome x = "<span font_desc='FontAwesome'>" ++ x ++ "</span>"
+fontAwesome x = "<span font_desc='WenQuanYi Micro Hei Mono'>" ++ x ++ "</span>"
 
 -- | Size of the bar
 barSize :: Resolution -> Int

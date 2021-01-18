@@ -47,21 +47,19 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal = "termite"
+myTerminal = "gnome-terminal"
 
 -- The command to lock the screen or show the screensaver.
-myScreensaver = "dm-tool switch-to-greeter"
+myScreensaver = "xscreensaver-command --lock"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
-mySelectScreenshot = "select-screenshot"
+mySelectScreenshot = "gnome-screenshot"
 
--- The command to take a fullscreen screenshot.
-myScreenshot = "xfce4-screenshooter"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
-myLauncher = "rofi -show"
+myLauncher = "rofi -show run"
 
 
 
@@ -69,7 +67,7 @@ myLauncher = "rofi -show"
 -- Workspaces
 -- The default number of workspaces (virtual screens) and their names.
 --
-myWorkspaces = ["1: term","2: web","3: code","4: media"] ++ map show [5..9]
+myWorkspaces = ["1: rand","2: code","3: back"] ++ map show [4..9]
 
 
 ------------------------------------------------------------------------
@@ -87,19 +85,14 @@ myWorkspaces = ["1: term","2: web","3: code","4: media"] ++ map show [5..9]
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [
-      className =? "Google-chrome"                --> doShift "2:web"
-    , resource  =? "desktop_window"               --> doIgnore
+    [ resource  =? "desktop_window"               --> doIgnore
     , className =? "Galculator"                   --> doCenterFloat
-    , className =? "Steam"                        --> doCenterFloat
     , className =? "Gimp"                         --> doCenterFloat
     , resource  =? "gpicview"                     --> doCenterFloat
     , className =? "MPlayer"                      --> doCenterFloat
     , className =? "Pavucontrol"                  --> doCenterFloat
     , className =? "Mate-power-preferences"       --> doCenterFloat
     , className =? "Xfce4-power-manager-settings" --> doCenterFloat
-    , className =? "VirtualBox"                   --> doShift "4:vm"
-    , className =? "Xchat"                        --> doShift "5:media"
     , className =? "stalonetray"                  --> doIgnore
     , isFullscreen                                --> (doF W.focusDown <+> doFullFloat)
     -- , isFullscreen                             --> doFullFloat
@@ -117,13 +110,9 @@ myManageHook = composeAll
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 
-outerGaps    = 10
-myGaps       = gaps [(U, outerGaps), (R, outerGaps), (L, outerGaps), (D, outerGaps)]
-addSpace     = renamed [CutWordsLeft 2] . spacing gap
 tab          =  avoidStruts
                $ renamed [Replace "Tabbed"]
                $ addTopBar
-               $ myGaps
                $ tabbed shrinkText myTabTheme
 
 layouts      = avoidStruts (
@@ -134,8 +123,7 @@ layouts      = avoidStruts (
                   $ renamed [Replace "BSP"]
                   $ addTabs shrinkText myTabTheme
                   $ subLayout [] Simplest
-                  $ myGaps
-                  $ addSpace (BSP.emptyBSP)
+                  $ BSP.emptyBSP
                 )
                 ||| tab
                )
@@ -193,7 +181,7 @@ green   = "#859900"
 
 -- sizes
 gap         = 10
-topbar      = 10
+topbar      = 7
 border      = 0
 prompt      = 20
 status      = 20
@@ -206,9 +194,9 @@ unfocusColor = base02
 
 -- myFont      = "-*-Zekton-medium-*-*-*-*-160-*-*-*-*-*-*"
 -- myBigFont   = "-*-Zekton-medium-*-*-*-*-240-*-*-*-*-*-*"
-myFont      = "xft:Zekton:size=9:bold:antialias=true"
-myBigFont   = "xft:Zekton:size=9:bold:antialias=true"
-myWideFont  = "xft:Eurostar Black Extended:"
+myFont      = "xft:WenQuanYi Micro Hei Mono:size=9:bold:antialias=true"
+myBigFont   = "xft:WenQuanYi Micro Hei Mono:size=9:bold:antialias=true"
+myWideFont  = "xft:WenQuanYi Micro Hei Mono:"
             ++ "style=Regular:pixelsize=180:hinting=true"
 
 -- this is a "fake title" used as a highlight bar in lieu of full borders
@@ -272,12 +260,20 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. shiftMask, xK_p),
      spawn mySelectScreenshot)
 
-  -- Take a full screenshot using the command specified by myScreenshot.
-  , ((modMask .|. controlMask .|. shiftMask, xK_p),
-     spawn myScreenshot)
-
   -- Toggle current focus window to fullscreen
-  , ((modMask, xK_f), sendMessage $ Toggle FULL)
+  , ((modMask .|. shiftMask, xK_f), sendMessage $ Toggle FULL)
+
+  -- Start chrome
+  , ((modMask, xK_c), spawn "google-chrome-stable --proxy-server=\"socks5://127.0.0.1:7891\"")
+
+  -- Start vs code
+  , ((modMask, xK_v), spawn "/opt/visual-studio-code/code --no-sandbox --unity-launch")
+
+  -- Start spotify 
+  , ((modMask, xK_s), spawn "spotify")
+
+  -- Start file manager
+  , ((modMask, xK_f), spawn "nautilus")
 
   -- Mute volume.
   , ((0, xF86XK_AudioMute),
@@ -328,8 +324,12 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      refresh)
 
   -- Move focus to the next window.
+  , ((modMask, xK_Tab),
+     windows W.focusDown)
+
   , ((modMask, xK_j),
      windows W.focusDown)
+
 
   -- Move focus to the previous window.
   , ((modMask, xK_k),
@@ -372,7 +372,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      sendMessage (IncMasterN (-1)))
 
   -- Toggle the status bar gap.
-  -- TODO: update this binding with avoidStruts, ((modMask, xK_b),
+  , ((modMask, xK_b), sendMessage ToggleStruts)
 
   -- Quit xmonad.
   , ((modMask .|. shiftMask, xK_q),
@@ -415,9 +415,6 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. controlMask, xK_m), withFocused (sendMessage . MergeAll))
   -- Group the current tabbed windows
   , ((modMask .|. controlMask, xK_u), withFocused (sendMessage . UnMerge))
-
-  -- Toggle through tabes from the right
-  , ((modMask, xK_Tab), onGroup W.focusDown')
   ]
 
   ++
@@ -432,8 +429,8 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. controlMask .|. shiftMask, xK_Down  ), sendMessage $ ShrinkFrom D)
   , ((modMask .|. controlMask,               xK_Up    ), sendMessage $ ExpandTowards U)
   , ((modMask .|. controlMask .|. shiftMask, xK_Up    ), sendMessage $ ShrinkFrom U)
-  , ((modMask,                               xK_r     ), sendMessage BSP.Rotate)
-  , ((modMask,                               xK_s     ), sendMessage BSP.Swap)
+  , ((modMask .|. controlMask,               xK_r     ), sendMessage BSP.Rotate)
+  , ((modMask .|. controlMask,               xK_s     ), sendMessage BSP.Swap)
   -- , ((modMask,                               xK_n     ), sendMessage BSP.FocusParent)
   -- , ((modMask .|. controlMask,               xK_n     ), sendMessage BSP.SelectNode)
   -- , ((modMask .|. shiftMask,                 xK_n     ), sendMessage BSP.MoveNode)

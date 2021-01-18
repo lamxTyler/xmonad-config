@@ -1,9 +1,9 @@
 Config {
-       font = "xft:Bitstream Vera Sans Mono:size=12:bold:antialias=true"
+       font = "xft:WenQuanYi Micro Hei Mono:size=12:bold:antialias=true"
        , allDesktops = True
        , bgColor = "#282c34"
        , fgColor = "#bbc2cf"
-       , position = TopW L 95
+       , position = Top
        , commands =
 
         -- network activity monitor (dynamic interface resolution)
@@ -15,8 +15,8 @@ Config {
                              , "--high"     , "darkred"
                              ] 10
 
-        -- cpu activity monitor
-        , Run MultiCpu       [ "--template" , "Cpu: <total0>%|<total1>%"
+        -- cpu activity monitr
+        , Run MultiCpu       [ "--template" , "Cpu: <total>%"
                              , "--Low"      , "50"         -- units: %
                              , "--High"     , "85"         -- units: %
                              , "--low"      , "darkgreen"
