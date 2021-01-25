@@ -50,11 +50,11 @@ import qualified Data.Map        as M
 myTerminal = "gnome-terminal"
 
 -- The command to lock the screen or show the screensaver.
-myScreensaver = "xscreensaver-command --lock"
+myScreensaver = "systemctl suspend && slock"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
-mySelectScreenshot = "gnome-screenshot"
+mySelectScreenshot = "gnome-screenshot -i"
 
 
 -- The command to use as a launcher, to launch commands that don't have
@@ -248,7 +248,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      spawn $ XMonad.terminal conf)
 
   -- Lock the screen using command specified by myScreensaver.
-  , ((modMask, xK_0),
+  , ((modMask,  xK_l),
      spawn myScreensaver)
 
   -- Spawn the launcher using command specified by myLauncher.
@@ -264,7 +264,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. shiftMask, xK_f), sendMessage $ Toggle FULL)
 
   -- Start chrome
-  , ((modMask, xK_c), spawn "google-chrome-stable --proxy-server=\"socks5://127.0.0.1:7891\"")
+  , ((modMask, xK_c), spawn "/opt/google/chrome/chrome --proxy-server=\"socks5://127.0.0.1:7891\"")
 
   -- Start vs code
   , ((modMask, xK_v), spawn "/opt/visual-studio-code/code --no-sandbox --unity-launch")
@@ -352,12 +352,12 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      windows W.swapUp    )
 
   -- Shrink the master area.
-  , ((modMask, xK_h),
-     sendMessage Shrink)
+  -- , ((modMask, xK_h),
+  --   sendMessage Shrink)
 
   -- Expand the master area.
-  , ((modMask, xK_l),
-     sendMessage Expand)
+  -- , ((modMask, xK_l),
+  --    sendMessage Expand)
 
   -- Push window back into tiling.
   , ((modMask, xK_t),

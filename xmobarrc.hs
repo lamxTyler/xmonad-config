@@ -8,8 +8,8 @@ Config {
 
         -- network activity monitor (dynamic interface resolution)
         [ Run DynNetwork     [ "--template" , "<dev>: <tx>kB/s|<rx>kB/s"
-                             , "--Low"      , "1000"       -- units: B/s
-                             , "--High"     , "5000"       -- units: B/s
+                             , "--Low"      , "1000000"       -- units: B/s
+                             , "--High"     , "5000000"       -- units: B/s
                              , "--low"      , "darkgreen"
                              , "--normal"   , "darkorange"
                              , "--high"     , "darkred"
@@ -23,15 +23,6 @@ Config {
                              , "--normal"   , "darkorange"
                              , "--high"     , "darkred"
                              ] 10
-
-        -- cpu core temperature monitor
-        , Run CoreTemp       [ "--template" , "Temp: <core0>°C|<core1>°C"
-                             , "--Low"      , "70"        -- units: °C
-                             , "--High"     , "80"        -- units: °C
-                             , "--low"      , "darkgreen"
-                             , "--normal"   , "darkorange"
-                             , "--high"     , "darkred"
-                             ] 50
 
         -- memory usage monitor
         , Run Memory         [ "--template" ,"Mem: <usedratio>%"
@@ -66,5 +57,5 @@ Config {
         ]
        , sepChar = "%"
        , alignSep = "}{"
-       , template = "%StdinReader% }{ %battery% | %multicpu% | %coretemp% | %memory% | %dynnetwork% | %date% |"   -- #69DFFA
+       , template = "%StdinReader% }{ %battery% | %multicpu% | %memory% | %dynnetwork% | %date% "   -- #69DFFA
        }
