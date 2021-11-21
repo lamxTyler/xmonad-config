@@ -1,5 +1,12 @@
 #!/bin/sh
 
+xrandr --output DP1 --mode 3840x2160
+
+NR_OF_MONITORS=$(xrandr -d :0 -q | grep ' connected' | wc -l)
+if [ $NR_OF_MONITORS = "2" ]; then
+  xrandr --output eDP1 --off
+fi
+
 # Power manager
 if [ -z "$(pgrep xfce4-power-manager)" ] ; then
     xfce4-power-manager &

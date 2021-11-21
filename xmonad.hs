@@ -264,16 +264,21 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. shiftMask, xK_f), sendMessage $ Toggle FULL)
 
   -- Start chrome
-  , ((modMask, xK_c), spawn "/opt/google/chrome/chrome --proxy-server=\"socks5://127.0.0.1:7891\"")
+  --, ((modMask, xK_c), spawn "/opt/google/chrome/chrome --proxy-server=\"socks5://127.0.0.1:7891\"")
+  , ((modMask, xK_c), spawn "/opt/google/chrome/chrome")
+
 
   -- Start vs code
-  , ((modMask, xK_v), spawn "/opt/visual-studio-code/code --no-sandbox --unity-launch")
+  , ((modMask, xK_v), spawn "/usr/bin/code --no-sandbox --unity-launch")
 
   -- Start spotify 
   , ((modMask, xK_s), spawn "spotify")
 
   -- Start file manager
   , ((modMask, xK_f), spawn "nautilus")
+
+  -- Start telegram
+  , ((modMask, xK_t), spawn "telegram-desktop")
 
   -- Mute volume.
   , ((0, xF86XK_AudioMute),
@@ -360,8 +365,8 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   --    sendMessage Expand)
 
   -- Push window back into tiling.
-  , ((modMask, xK_t),
-     withFocused $ windows . W.sink)
+  -- , ((modMask, xK_t),
+  --    withFocused $ windows . W.sink)
 
   -- Increment the number of windows in the master area.
   , ((modMask, xK_comma),
