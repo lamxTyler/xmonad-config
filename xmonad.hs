@@ -54,7 +54,7 @@ myScreensaver = "systemctl suspend && slock"
 
 -- The command to take a selective screenshot, where you select
 -- what you'd like to capture on the screen.
-mySelectScreenshot = "gnome-screenshot -i"
+mySelectScreenshot = "flameshot gui -p ~/Pictures"
 
 
 -- The command to use as a launcher, to launch commands that don't have
